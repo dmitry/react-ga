@@ -224,6 +224,56 @@ var reactGA = {
     }
   },
 
+  plugin: {
+    /**
+     * require:
+     * GA requires a plugin
+     * @param name {String} e.g. 'ecommerce' or 'myplugin'
+     */
+    require: function(name) {
+      if (typeof ga === 'function') {
+        ga('require', name);
+      }
+
+      if (_debug) {
+        log('called ga(\'require\', \'' + name + '\');');
+      }
+    },
+
+    /**
+     * execute:
+     * GA execute action for plugin
+     * @param name {String} e.g. 'ecommerce' or 'myplugin'
+     * @param action {String} e.g. 'addItem' or 'myCustomAction'
+     * @param payload {Object} optional e.g { id: '1x5e', name : 'My product to track' }
+     */
+    execute: function(name, action, payload) {
+      if (typeof ga === 'function') {
+        if (typeof name !== 'string') {
+          warn('Expected `name` arg to be a String.');
+        } else if (typeof action !== 'string') {
+          warn('Expected `action` arg to be a String.');
+        } else {
+          var command = name + ':' + action;
+          payload = payload || null;
+          if (payload) {
+            ga(command, payload);
+            if (_debug) {
+              log('called ga(\'' + command + '\');');
+              log('with payload: ' + JSON.stringify(payload));
+            }
+          } else {
+            ga(command);
+            if (_debug) {
+              log('called ga(\'' + command + '\');');
+            }
+
+          }
+        }
+      }
+    }
+  },
+
   /**
    * outboundLink:
    * GA outboundLink tracking
@@ -298,4 +348,3 @@ OutboundLink.trackLink = reactGA.outboundLink;
 reactGA.OutboundLink = OutboundLink;
 
 module.exports = reactGA;
-
